@@ -1,0 +1,51 @@
+#!/usr/bin/env node
+
+const { spawn } = require('node:child_process');
+
+const Choices = require('prompt-choices');
+
+const args = process.argv.splice(2);
+
+const dockerProcess = spawn('docker', ['ps']);
+
+const data = [];
+
+dockerProcess.stdout.on('data', (chunk) => data.push(chunk.toString('utf-8')));
+
+dockerProcess.stdout.on('close', processData);
+
+function stopContainer(containerId) {
+  return new Promise((res, rej) => {
+    const stopCommand = spawn('docker', ['stop', containerId]);
+
+    console.log(`Stopping "${containerId}"`);
+
+    const fail = () => rej(`Failed to stop "${containerId}".`);
+    const success = () => res(`Stopped "${containerId}".`);
+
+    stopCommand.on('close', success);
+    stopCommand.on('error', fail);
+    stopCommand.on('disconnect', fail);
+  });
+}
+
+function processData() {
+  const containers = data.join('').split(/\n|\r/g).slice(1).filter(Boolean);
+  if (containers.length === 0) {
+    console.log('No container running');
+    process.exit(0);
+  }
+
+  const containerIds = containers.map((entry) => entry.split(' ').at(0));
+  const stopCommand = containerIds.map(stopContainer);
+
+  stopCommand.forEach((cmd) => cmd.then(console.log).catch(console.error));
+
+  return Promise.all(stopCommand).then(() => {
+    console.log(
+      `\nStopped ${containerIds.length} container${
+        containerIds.length > 1 ? 's' : ''
+      }.`,
+    );
+  });
+}
