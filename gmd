@@ -1,0 +1,62 @@
+#!/usr/bin/env node
+
+const spawnProc = require('./utils/proc');
+
+const prompts = require('prompts');
+
+const args = process.argv.splice(2);
+
+if (args.includes(/\-\-help|\-h/)) {
+  console.log(`
+    Command: gmd
+    Options:
+      -h | --help: show help
+      -f: Force delete (use -D when deleting a branch)
+  `);
+  return;
+}
+
+const forceDelete = args.includes(/\-f/);
+
+/**
+ *
+ * @param {String} branchPerLine - String containing name of branches in each line
+ * @returns {String[]} - Array of branches
+ */
+function getNonActiveNonMainBranches(branchPerLine) {
+  return branchPerLine
+    .split(/\n|\r/g)
+    .map((branch) => branch.replace(/^\s+/, ''))
+    .filter(
+      (branch) =>
+        branch &&
+        !branch.startsWith('* ') &&
+        !['main', 'master'].includes(branch),
+    );
+}
+
+spawnProc('git', ['branch'])
+  .then(getNonActiveNonMainBranches)
+  .then((branches) => {
+    if (branches.length === 0) {
+      throw new Error('No branch to delete!');
+    }
+  })
+  .then((branches) =>
+    prompts({
+      type: 'multiselect',
+      name: 'selectedBranches',
+      message: 'Select branch(es) to delete:',
+      choices: branches.map((branch) => ({ title: branch, value: branch })),
+    }),
+  )
+  .then(({ selectedBranches }) =>
+    Promise.allSettled(
+      selectedBranches.map((branch) =>
+        spawnProc('git', ['branch', forceDelete ? '-D' : '-d', branch])
+          .then(console.log)
+          .catch(console.error),
+      ),
+    ),
+  )
+  .catch((err) => console.error(`${err.toString()}`));
