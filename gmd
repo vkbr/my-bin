@@ -16,7 +16,8 @@ if (args.includes(/\-\-help|\-h/)) {
   return;
 }
 
-const forceDelete = args.includes(/\-f/);
+const forceDelete = args.includes('-f');
+console.log({ forceDelete });
 
 /**
  *
@@ -41,6 +42,7 @@ spawnProc('git', ['branch'])
     if (branches.length === 0) {
       throw new Error('No branch to delete!');
     }
+    return branches;
   })
   .then((branches) =>
     prompts({

@@ -7,6 +7,7 @@ const { spawn } = require('node:child_process');
  */
 function spawnProc(command, args) {
   return new Promise((resolve, reject) => {
+    console.log(`$ ${command} ${(args?.join(' ') ?? '')}`)
     const data = [];
     const errors = []
     const process = spawn(command, args);
