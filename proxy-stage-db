@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+cloud-sql-proxy eqt-requests-test:europe-west1:requests-stage -p 6781

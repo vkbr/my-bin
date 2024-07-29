@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+cloud-sql-proxy eqt-requests-prod:europe-west1:requests-prod-clone -p 6781

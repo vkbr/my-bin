@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+docker container stop request-local || echo "No instance running"
+
+docker container rm request-local || echo "No existing container"
+
+docker run \
+  --name request-local \
+-p 4444:5432 \
+-e POSTGRES_PASSWORD=p1 \
+-e POSTGRES_USER=u1 \
+-e POSTGRES_DB=requests-dev \
+-d postgres:13
+
+sleep 2
+
+psql -h localhost -U u1 -d requests-dev -p 4444 -c "CREATE DATABASE \"requests-dev_it\";"
+
+# psql -h localhost -U u1 -p 4444 -d requests-dev -c "CREATE SCHEMA public;"
+
