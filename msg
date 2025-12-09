@@ -31,7 +31,7 @@ case "$1" in
     prefix="(feat) "
     ;;
   -b|--bug|--fix)
-    prefix="(fix) "
+    prefix="fix! "
     ;;
   -c|--chore)
     prefix="(chore) "
@@ -65,7 +65,7 @@ if [[ -z "$prefix" ]]; then
         prefix="(feat) "
         break;;
       fix)
-        prefix="(fix) "
+        prefix="fix! "
         break;;
       chore)
         prefix="(chore) "
