@@ -14,7 +14,7 @@ docker run \
 
 sleep 2
 
-psql -h localhost -U u1 -d requests-dev -p 4444 -c "CREATE DATABASE \"requests-dev_it\";"
+echo "p1" > psql -h localhost -U u1 -d requests-dev -p 4444 -c "CREATE DATABASE \"requests_it\";"
 
 # psql -h localhost -U u1 -p 4444 -d requests-dev -c "CREATE SCHEMA public;"
 

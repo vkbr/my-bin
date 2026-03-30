@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
-cloud-sql-proxy eqt-requests-prod:europe-west1:requests-prod-clone -p 6781
+cd ~/Fx/requests && printf '8\n1' | ./scripts/db-proxy.sh
+

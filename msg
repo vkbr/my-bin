@@ -14,7 +14,7 @@ fi
 
 echo "Working branch = $current_branch";
 
-if [[ -z $ticket ]]; then
+if [[ -z $ticket && "$PWD" == /Users/vivek.brohma/Fx* ]]; then
   while true; do
     printf "Unable to find branch pattern (ABCD-1234). Continue? \033[90m(Y/n)\033[0m "
     read yn
